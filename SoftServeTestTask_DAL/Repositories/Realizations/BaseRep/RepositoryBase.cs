@@ -39,9 +39,9 @@ namespace SoftServeTestTask_DAL.Repositories.Realizations.Base
             _db.Set<T>().Update(entity);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            await _db.SaveChangesAsync();
+            return await _db.SaveChangesAsync();
         }
     }
 }

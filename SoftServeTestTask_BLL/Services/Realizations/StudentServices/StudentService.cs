@@ -32,7 +32,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.StudentServices
             var student = _mapper.Map<Student>(newStudent);
 
             student = await _studentRepository.CreateAsync(student);
-            await _studentRepository.SaveChangesAsync();
+            var result = await _studentRepository.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to create course";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             var response = _mapper.Map<StudentDTO>(student);
 
@@ -46,7 +52,7 @@ namespace SoftServeTestTask_BLL.Services.Realizations.StudentServices
             return _mapper.Map<IEnumerable<StudentDTO>>(students);
         }
 
-        public async Task<bool> DeleteStudents(int Id)
+        public async Task<bool> DeleteStudent(int Id)
         {
             if(Id <= 0)
             {
@@ -64,7 +70,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.StudentServices
             }
 
             _studentRepository.Delete(student);
-            await _studentRepository.SaveChangesAsync();
+            var result = await _studentRepository.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to delete student";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return true;
         }
@@ -81,7 +93,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.StudentServices
             var student = _mapper.Map<Student>(updateStudent);
 
             _studentRepository.Update(student);
-            await _studentRepository.SaveChangesAsync();
+            var result = await _studentRepository.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to update student";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return _mapper.Map<StudentDTO>(student);
         }
@@ -96,7 +114,12 @@ namespace SoftServeTestTask_BLL.Services.Realizations.StudentServices
             }
 
             var student = await _studentRepository.GetByIdAsync(Id);
-
+            if (student is null)
+            {
+                var message = "Student not found";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
             return _mapper.Map<StudentDTO>(student);
         }
     }

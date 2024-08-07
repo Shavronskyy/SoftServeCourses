@@ -11,7 +11,7 @@ namespace SoftServeTestTask_BLL.Services.Interfaces.StudentServices
     {
         Task<StudentDTO> CreateStudent(CreateStudentDTO newStudent);
         Task<IEnumerable<StudentDTO>> GetAllStudents();
-        Task<bool> DeleteStudents(int Id);
+        Task<bool> DeleteStudent(int Id);
         Task<StudentDTO> UpdateStudent(UpdateStudentDTO updateStudent);
         Task<StudentDTO> GetStudentById(int Id);
     }

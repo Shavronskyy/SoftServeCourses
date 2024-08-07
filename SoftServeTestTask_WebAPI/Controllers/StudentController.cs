@@ -58,7 +58,7 @@ namespace SoftServeTestTask_WebAPI.Controllers
                 return BadRequest();
             }
 
-            var isDeletedSuccessfully = await _studentService.DeleteStudents(Id);
+            var isDeletedSuccessfully = await _studentService.DeleteStudent(Id);
             return isDeletedSuccessfully ? Ok() : NotFound();
         }
 

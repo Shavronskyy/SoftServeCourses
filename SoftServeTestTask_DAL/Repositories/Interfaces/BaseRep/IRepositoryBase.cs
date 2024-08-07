@@ -8,6 +8,6 @@ namespace SoftServeTestTask_DAL.Repositories.Interfaces.BaseRep
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
         void Delete(T entity);
-        Task SaveChangesAsync();
+        Task<int> SaveChangesAsync();
     }
 }

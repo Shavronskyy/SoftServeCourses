@@ -32,7 +32,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.TeacherServices
             var teacher = _mapper.Map<Teacher>(newTeacher);
 
             teacher = await _teacherRepo.CreateAsync(teacher);
-            await _teacherRepo.SaveChangesAsync();
+            var result = await _teacherRepo.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to delete student";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             var response = _mapper.Map<TeacherDTO>(teacher);
 
@@ -63,7 +69,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.TeacherServices
             }
 
             _teacherRepo.Delete(teacher);
-            await _teacherRepo.SaveChangesAsync();
+            var result = await _teacherRepo.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to delete student";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return true;
         }
@@ -80,7 +92,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.TeacherServices
             var teacher = _mapper.Map<Teacher>(updateTeacher);
 
             _teacherRepo.Update(teacher);
-            await _teacherRepo.SaveChangesAsync();
+            var result = await _teacherRepo.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to delete student";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return _mapper.Map<TeacherDTO>(teacher);
         }
@@ -96,6 +114,12 @@ namespace SoftServeTestTask_BLL.Services.Realizations.TeacherServices
 
             var teacher = await _teacherRepo.GetByIdAsync(Id);
 
+            if (teacher is null)
+            {
+                var message = "Teacher not found";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
             return _mapper.Map<TeacherDTO>(teacher);
         }
     }

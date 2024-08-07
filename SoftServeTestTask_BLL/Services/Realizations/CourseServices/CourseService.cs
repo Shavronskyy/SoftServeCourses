@@ -24,15 +24,27 @@ namespace SoftServeTestTask_BLL.Services.Realizations.CourseServices
         {
             if(newCourse is null)
             {
-                var message = "NewCourseDTO is null!";
+                var message = "NewCourseDTO is null";
                 _logger.LogError(message);
                 throw new ArgumentNullException(message);
             }
 
-            var course = _mapper.Map<Course>(newCourse);
+            var course = _mapper.Map<Course>(newCourse);    
+            if (course is null)
+            {
+                var message = "course is null";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             course = await _courseRepository.CreateAsync(course);
-            await _courseRepository.SaveChangesAsync();
+            var result = await _courseRepository.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to create course";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             var response = _mapper.Map<CourseDTO>(course);
 
@@ -42,7 +54,7 @@ namespace SoftServeTestTask_BLL.Services.Realizations.CourseServices
         public async Task<IEnumerable<CourseDTO>> GetAllCourses()
         {
             var courses = await _courseRepository.GetAllAsync();
-
+            
             return _mapper.Map<IEnumerable<CourseDTO>>(courses);
         }
 
@@ -57,13 +69,19 @@ namespace SoftServeTestTask_BLL.Services.Realizations.CourseServices
             var course = await _courseRepository.GetByIdAsync(Id);
             if(course is null)
             {
-                var message = "course notFound";
+                var message = "course not found";
                 _logger.LogError(message);
                 throw new ArgumentNullException(message);
             }
 
             _courseRepository.Delete(course);
-            await _courseRepository.SaveChangesAsync();
+            var result = await _courseRepository.SaveChangesAsync();
+            if (result <= 0)
+            {
+                var message = "Save changes error, when attempt to delete course";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return true;
         }
@@ -80,8 +98,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.CourseServices
             var course = _mapper.Map<Course>(updateCourse);
 
             _courseRepository.Update(course);
-            await _courseRepository.SaveChangesAsync();
-
+            var result = await _courseRepository.SaveChangesAsync();
+            if(result <= 0)
+            {
+                var message = "Save changes error, when attempt to update course";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
             return _mapper.Map<CourseDTO>(course); 
         }
 
@@ -95,6 +118,13 @@ namespace SoftServeTestTask_BLL.Services.Realizations.CourseServices
             }
 
             var course = await _courseRepository.GetByIdAsync(Id);
+
+            if (course is null)
+            {
+                var message = "Course not found";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
 
             return _mapper.Map<CourseDTO>(course);
         }
