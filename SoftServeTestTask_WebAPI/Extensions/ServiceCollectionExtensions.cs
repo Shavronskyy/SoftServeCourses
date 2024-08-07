@@ -1,5 +1,4 @@
-﻿
-using SoftServeTestTask_BLL.Services.Interfaces.CourseServices;
+﻿using SoftServeTestTask_BLL.Services.Interfaces.CourseServices;
 using SoftServeTestTask_BLL.Services.Interfaces.StudentServices;
 using SoftServeTestTask_BLL.Services.Interfaces.TeacherServices;
 using SoftServeTestTask_BLL.Services.Realizations.CourseServices;
@@ -11,17 +10,16 @@ using SoftServeTestTask_DAL.Repositories.Interfaces.TeacherRep;
 using SoftServeTestTask_DAL.Repositories.Realizations.CourseRep;
 using SoftServeTestTask_DAL.Repositories.Realizations.StudentRep;
 using SoftServeTestTask_DAL.Repositories.Realizations.TeacherRep;
-using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection.Metadata;
-using FluentResults;
+using SoftServeTestTask_DAL.Repositories.Realizations.Account;
 using FluentValidation.AspNetCore;
-using System.Reflection;
 using SoftServeTestTask_BLL.Validation;
-using SoftServeTestTask_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using SoftServeTestTask_DAL.Database;
-using System;
+using SoftServeTestTask_DAL.Entities.Account;
+using SoftServeTestTask_BLL.Services.Interfaces.Account;
+using SoftServeTestTask_BLL.Services.Realizations.Account;
+using SoftServeTestTask_DAL.Repositories.Interfaces.AccountRep;
+
 
 
 namespace SoftServeTestTask_WebAPI.Extensions
@@ -37,6 +35,17 @@ namespace SoftServeTestTask_WebAPI.Extensions
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ITeacherService, TeacherService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+            services.AddAuthentication();
+            services.AddAuthorization();
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<CoursesDbContext>()
+                    .AddDefaultTokenProviders();
+
+            
 
             //Validation
             services.AddControllers().AddFluentValidation(fv =>
@@ -56,6 +65,7 @@ namespace SoftServeTestTask_WebAPI.Extensions
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
         }
     }
 }

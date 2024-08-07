@@ -14,7 +14,5 @@ namespace SoftServeTestTask_DAL.Entities
         public List<Student> Students { get; set; }
 
         public List<Teacher> Teachers { get; set; }
-
-        //public DateTime CreationDate { get; set; }
     }
 }

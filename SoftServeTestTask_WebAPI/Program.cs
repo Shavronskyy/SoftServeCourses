@@ -1,15 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using SoftServeTestTask_BLL.Services.Interfaces.CourseServices;
-using SoftServeTestTask_BLL.Services.Realizations.CourseServices;
+using SoftServeTestTask_BLL.DTO.Account;
 using SoftServeTestTask_DAL.Database;
-using SoftServeTestTask_DAL.Repositories.Interfaces.CourseRep;
-using SoftServeTestTask_DAL.Repositories.Interfaces.StudentRep;
-using SoftServeTestTask_DAL.Repositories.Interfaces.TeacherRep;
-using SoftServeTestTask_DAL.Repositories.Realizations.CourseRep;
-using SoftServeTestTask_DAL.Repositories.Realizations.StudentRep;
-using SoftServeTestTask_DAL.Repositories.Realizations.TeacherRep;
 using SoftServeTestTask_WebAPI.Extensions;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -27,8 +19,19 @@ namespace SoftServeTestTask_WebAPI
             builder.Services.AddDbContext<CoursesDbContext>(options =>
             options.UseSqlServer(builder.Configuration["DefaultConnection:ConnectionString"]));
 
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opt =>
+            {
+                opt.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                opt.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
             builder.Services.AddCustomService();
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
             builder.Services.AddCustomRepositories();
             var app = builder.Build();
 
@@ -40,8 +43,8 @@ namespace SoftServeTestTask_WebAPI
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
 
             app.Run();

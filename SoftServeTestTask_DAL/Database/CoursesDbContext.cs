@@ -2,15 +2,18 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SoftServeTestTask_DAL.Entities;
+using SoftServeTestTask_DAL.Entities.Account;
 
 namespace SoftServeTestTask_DAL.Database
 {
-    public class CoursesDbContext : DbContext
+    public class CoursesDbContext : IdentityDbContext<ApplicationUser>
     {
         public CoursesDbContext(DbContextOptions<CoursesDbContext> options) : base(options)
         {
 
         }
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<Student> Students { get; set; }
         
@@ -18,21 +21,9 @@ namespace SoftServeTestTask_DAL.Database
 
         public DbSet<Course> Courses { get; set; }
 
-        //protected override async void OnModelCreating(ModelBuilder builder)
-        //{
-        //    base.OnModelCreating(builder);
-
-        //    // Seed roles
-        //    var admin = new IdentityRole("admin");
-        //    admin.NormalizedName = "admin";
-
-        //    var student = new IdentityRole("Student");
-        //    student.NormalizedName = "Student";
-
-        //    var teacher = new IdentityRole("Teacher");
-        //    teacher.NormalizedName = "Teacher";
-
-        //    builder.Entity<IdentityRole>().HasData(admin, student, teacher);
-        //}
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
