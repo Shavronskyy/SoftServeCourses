@@ -1,0 +1,6 @@
+@SoftServeTestTask_WebAPI_HostAddress = http://localhost:5145
+
+GET {{SoftServeTestTask_WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
