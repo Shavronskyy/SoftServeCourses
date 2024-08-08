@@ -3,13 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using SoftServeTestTask_BLL.DTO.Account;
 using SoftServeTestTask_BLL.Services.Interfaces.Account;
 using SoftServeTestTask_DAL.Entities.Account;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SoftServeTestTask_BLL.Services.Realizations.Account
 {

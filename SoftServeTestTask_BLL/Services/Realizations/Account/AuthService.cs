@@ -30,17 +30,27 @@ namespace SoftServeTestTask_BLL.Services.Realizations.Account
 
         public async Task<bool> AssignRole(string email, string roleName)
         {
-            var user = await _repo.GetUserByEmail(email);
-            if(user != null)
+            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(roleName))
             {
-                if (!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult())
-                {
-                    _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
-                }
-                await _userManager.AddToRoleAsync(user, roleName);
-                return true;
+                var message = "Email or rolename is null";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
             }
-            return false;
+
+            var user = await _repo.GetUserByEmail(email);
+            if(user is null)
+            {
+                var message = "User not found";
+                _logger.LogError(message);
+                throw new ArgumentNullException(message);
+            }
+
+            if (!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
+            }
+            await _userManager.AddToRoleAsync(user, roleName);
+            return true;
         }
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequest)
@@ -49,7 +59,7 @@ namespace SoftServeTestTask_BLL.Services.Realizations.Account
 
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
 
-            if(user == null || isValid == false)
+            if(user == null || !isValid)
             {
                 return new LoginResponseDTO()
                 {

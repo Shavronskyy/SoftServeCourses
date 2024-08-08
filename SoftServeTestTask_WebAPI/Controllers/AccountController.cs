@@ -10,10 +10,12 @@ namespace SoftServeTestTask_WebAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthService _service;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IAuthService service)
+        public AccountController(IAuthService service, ILogger<AccountController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,6 +23,13 @@ namespace SoftServeTestTask_WebAPI.Controllers
         public async Task<IActionResult> Register([FromBody]RegisterRequestDTO request)
         {
             var response = await _service.Register(request);
+
+            if (string.IsNullOrEmpty(response.Email))
+            {
+                var message = "Wrong password or email";
+                _logger.LogError(message);
+                return NotFound(message);
+            }
 
             return Ok(response);
         }
@@ -30,9 +39,11 @@ namespace SoftServeTestTask_WebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
             var response = await _service.Login(request);
-            if(response == null)
+            if (response.User is null)
             {
-                return BadRequest(response);
+                var message = "Wrong password or email";
+                _logger.LogError(message);
+                return NotFound(message);
             }
 
             return Ok(response);
@@ -45,7 +56,9 @@ namespace SoftServeTestTask_WebAPI.Controllers
             var IsAssignRoleSuccess = await _service.AssignRole(request.Email, request.Role.ToUpper());
             if (!IsAssignRoleSuccess)
             {
-                return BadRequest();
+                var message = "Assign role failed";
+                _logger.LogError(message);
+                return BadRequest(message);
             }
 
             return Ok(IsAssignRoleSuccess);
